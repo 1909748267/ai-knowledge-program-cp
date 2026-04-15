@@ -1,8 +1,10 @@
-from app.deps import get_quiz_service
+from app.deps import get_current_user, get_learning_service, get_quiz_service
 
 
-def test_generate_analysis_success_with_stub(client, stub_service):
+def test_generate_analysis_success_with_stub(client, stub_service, stub_learning_service):
     client.app.dependency_overrides[get_quiz_service] = lambda: stub_service
+    client.app.dependency_overrides[get_learning_service] = lambda: stub_learning_service
+    client.app.dependency_overrides[get_current_user] = lambda: {"id": 1}
 
     response = client.post(
         "/api/generate-analysis",
@@ -25,6 +27,7 @@ def test_generate_analysis_success_with_stub(client, stub_service):
             ],
             "user_answers": ["从数据中学习规律的方法"],
             "content": "机器学习是人工智能的一个分支。",
+            "session_id": 9001,
         },
     )
 
@@ -37,6 +40,7 @@ def test_generate_analysis_success_with_stub(client, stub_service):
 
 
 def test_generate_analysis_should_validate_answers_length(client):
+    client.app.dependency_overrides[get_current_user] = lambda: {"id": 1}
     response = client.post(
         "/api/generate-analysis",
         json={
@@ -54,7 +58,32 @@ def test_generate_analysis_should_validate_answers_length(client):
             "user_answers": [],
         },
     )
+    client.app.dependency_overrides.clear()
 
     assert response.status_code == 400
     body = response.json()
     assert body["error"]["code"] == "INVALID_INPUT"
+
+
+def test_generate_analysis_should_require_auth(client):
+    response = client.post(
+        "/api/generate-analysis",
+        json={
+            "questions": [
+                {
+                    "id": "q_1",
+                    "type": "single_choice",
+                    "question": "什么是机器学习？",
+                    "options": ["A", "B"],
+                    "correct_answer": "A",
+                    "knowledge_point": "基础",
+                    "explanation": "说明",
+                }
+            ],
+            "user_answers": ["A"],
+        },
+    )
+
+    assert response.status_code == 401
+    body = response.json()
+    assert body["error"]["code"] == "UNAUTHORIZED"

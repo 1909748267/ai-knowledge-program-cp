@@ -5,8 +5,12 @@ from typing import Any, cast
 
 from app.config import get_settings
 from app.errors import AppError, app_error_handler, validation_error_handler
+from app.routers.auth import router as auth_router
 from app.routers.health import router as health_router
+from app.routers.history import router as history_router
 from app.routers.quiz import router as quiz_router
+from app.routers.users import router as users_router
+from app.routers.wrongbook import router as wrongbook_router
 
 
 def create_app() -> FastAPI:
@@ -26,7 +30,11 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RequestValidationError, cast(Any, validation_error_handler))
 
     app.include_router(health_router)
+    app.include_router(auth_router)
+    app.include_router(users_router)
     app.include_router(quiz_router)
+    app.include_router(history_router)
+    app.include_router(wrongbook_router)
 
     return app
 

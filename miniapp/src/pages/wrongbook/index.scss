@@ -1,16 +1,14 @@
-.placeholder-page {
+.wrongbook-page {
     min-height: 100vh;
-    padding: 36px;
+    padding: 24px;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
 }
 
-.icon {
-    font-size: 92px;
+.head-card {
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(255, 107, 53, 0.14);
+    padding: 18px;
     margin-bottom: 12px;
 }
 
@@ -18,25 +16,104 @@
     display: block;
     font-family: "ZCOOL KuaiLe", "PingFang SC", sans-serif;
     color: #ff6b35;
-    font-size: 44px;
-    margin-bottom: 8px;
+    font-size: 40px;
 }
 
 .desc {
     display: block;
     color: #636e72;
-    font-size: 25px;
+    font-size: 24px;
     line-height: 1.5;
-    margin-bottom: 22px;
+    margin-top: 6px;
+        font-weight: 700;
+    }
+    
+    .empty-card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(255, 107, 53, 0.12);
+        padding: 24px;
+        text-align: center;
+    }
+    
+    .empty-text {
+        display: block;
+        margin-bottom: 18px;
+        color: #636e72;
+        font-size: 24px;
+        font-weight: 700;
 }
 
 .back-home {
     width: 100%;
-    height: 86px;
+    height: 84px;
     border-radius: 999px;
     border: 0;
     background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
     color: #fff;
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 900;
+}
+.wrong-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wrong-item {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(255, 107, 53, 0.12);
+}
+
+.question-text {
+    display: block;
+    color: #2d3436;
+    font-size: 25px;
+    line-height: 1.45;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.meta {
+    display: block;
+    color: #636e72;
+    font-size: 22px;
+    margin-top: 4px;
+    font-weight: 700;
+}
+
+.meta.correct {
+    color: #06d6a0;
+}
+
+.retry-btn {
+    margin-top: 10px;
+    height: 72px;
+    border-radius: 999px;
+    border: 3px solid #ffd166;
+    background: #fff;
+    color: #2d3436;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.load-more {
+    margin-top: 10px;
+    height: 80px;
+    border-radius: 999px;
+    border: 3px solid #ffd166;
+    background: #ffffff;
+    color: #2d3436;
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.no-more {
+    text-align: center;
+    color: #636e72;
+    font-size: 22px;
+    margin-top: 12px;
+    font-weight: 700;
 }

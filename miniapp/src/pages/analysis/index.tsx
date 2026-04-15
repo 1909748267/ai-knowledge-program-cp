@@ -33,6 +33,7 @@ export default function AnalysisPage() {
             questions: session.questions,
             user_answers: result.answers,
             content: session.content,
+            session_id: session.sessionId,
         })
             .then((data) => {
                 setReport(data);

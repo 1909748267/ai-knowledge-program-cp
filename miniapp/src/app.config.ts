@@ -1,5 +1,6 @@
 export default defineAppConfig({
   pages: [
+    "pages/login/index",
     "pages/home/index",
     "pages/input/index",
     "pages/quiz/index",
@@ -7,6 +8,7 @@ export default defineAppConfig({
     "pages/analysis/index",
     "pages/wrongbook/index",
     "pages/history/index",
+    "pages/history-detail/index",
   ],
   window: {
     backgroundTextStyle: "light",

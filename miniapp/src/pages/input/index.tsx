@@ -1,5 +1,5 @@
 import { Button, Text, Textarea, View } from "@tarojs/components";
-import Taro from "@tarojs/taro";
+import Taro, { useLoad } from "@tarojs/taro";
 import { useMemo, useState } from "react";
 
 import { generateQuestions } from "@/services/api";
@@ -15,6 +15,13 @@ export default function InputPage() {
     const [level, setLevel] = useState<LevelType>("basic");
     const [questionCount, setQuestionCount] = useState(5);
     const [loading, setLoading] = useState(false);
+
+    useLoad((params) => {
+        if (params.seed) {
+            setContent(decodeURIComponent(params.seed));
+            Taro.showToast({ title: "已带入错题内容", icon: "none" });
+        }
+    });
 
     const canSubmit = useMemo(() => content.trim().length > 0 && !loading, [content, loading]);
 
@@ -40,6 +47,7 @@ export default function InputPage() {
                 level,
                 questionCount,
                 questions: data.questions,
+                sessionId: data.session_id,
             });
 
             Taro.navigateTo({ url: "/pages/quiz/index" });

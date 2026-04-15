@@ -23,6 +23,7 @@ export interface QuestionsApiData {
   tokens_used: number;
   estimated_cost: number;
   timestamp: string;
+  session_id: number;
 }
 
 export interface AnalysisApiData {
@@ -41,11 +42,79 @@ export interface ApiSuccess<T> {
   data: T;
 }
 
+export interface UserStats {
+  total_sessions: number;
+  avg_accuracy_rate: number;
+}
+
+export interface UserProfile {
+  id: number;
+  nickname: string;
+  avatar_url: string;
+  created_at?: string | null;
+  last_login_at?: string | null;
+  stats: UserStats;
+}
+
+export interface LoginApiData {
+  access_token: string;
+  expires_in: number;
+  user: UserProfile;
+}
+
+export interface HistoryItem {
+  id: number;
+  status: string;
+  question_count: number;
+  score: number | null;
+  accuracy_rate: number | null;
+  duration_sec: number | null;
+  created_at: string | null;
+  completed_at: string | null;
+}
+
+export interface HistoryListData {
+  list: HistoryItem[];
+  next_cursor: number | null;
+}
+
+export interface HistoryAnswer {
+  question_index: number;
+  user_answer: string;
+  correct_answer: string;
+  knowledge_point: string;
+  is_correct: boolean;
+  created_at: string | null;
+}
+
+export interface HistoryDetailData {
+  session: HistoryItem;
+  questions: Question[];
+  answers: HistoryAnswer[];
+}
+
+export interface WrongbookItem {
+  id: number;
+  session_id: number | null;
+  question_index: number | null;
+  question_snapshot: Question;
+  user_answer: string;
+  correct_answer: string;
+  knowledge_point: string;
+  created_at: string | null;
+}
+
+export interface WrongbookListData {
+  list: WrongbookItem[];
+  next_cursor: number | null;
+}
+
 export interface QuizSession {
   content: string;
   level: LevelType;
   questionCount: number;
   questions: Question[];
+  sessionId: number;
 }
 
 export interface QuizResult {

@@ -1,3 +1,3 @@
 export default {
-    navigationBarTitleText: "AI闯关学习",
+    navigationBarTitleText: "个人中心",
 };
