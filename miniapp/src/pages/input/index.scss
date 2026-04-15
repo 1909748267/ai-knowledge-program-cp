@@ -1,0 +1,118 @@
+.input-page {
+    min-height: 100vh;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-card,
+.settings-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 8px 28px rgba(255, 107, 53, 0.12);
+}
+
+.input-textarea {
+    width: 100%;
+    min-height: 280px;
+    border: 4px dashed #ffd166;
+    border-radius: 20px;
+    padding: 16px;
+    box-sizing: border-box;
+    background: #fff8f0;
+    font-size: 28px;
+    line-height: 1.5;
+}
+
+.char-count {
+    display: block;
+    text-align: right;
+    margin-top: 10px;
+    color: #636e72;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.upload-options {
+    margin-top: 18px;
+    display: flex;
+    gap: 14px;
+}
+
+.upload-btn {
+    flex: 1;
+    background: #fff;
+    border: 3px solid #fff0e0;
+    border-radius: 20px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.upload-icon {
+    font-size: 44px;
+}
+
+.upload-text {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2d3436;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.setting-row:last-child {
+    margin-bottom: 0;
+}
+
+.setting-label {
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.setting-options {
+    display: flex;
+    gap: 10px;
+}
+
+.option-btn {
+    padding: 10px 22px;
+    border: 2px solid #fff0e0;
+    border-radius: 14px;
+    background: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    color: #2d3436;
+}
+
+.option-btn.active {
+    background: #ff6b35;
+    border-color: #ff6b35;
+    color: #fff;
+}
+
+.generate-btn {
+    margin-top: auto;
+    height: 96px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+    color: #fff;
+    font-size: 34px;
+    font-weight: 900;
+}
+
+.generate-btn[disabled] {
+    opacity: 0.5;
+}

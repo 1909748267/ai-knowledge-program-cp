@@ -1,0 +1,160 @@
+.result-page {
+    min-height: 100vh;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #fff8f0 0%, #fff0e0 100%);
+}
+
+.result-empty {
+    min-height: 100vh;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.empty-title {
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.result-header {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.trophy {
+    display: block;
+    font-size: 86px;
+}
+
+.title {
+    display: block;
+    font-family: "ZCOOL KuaiLe", "PingFang SC", sans-serif;
+    color: #ff6b35;
+    font-size: 48px;
+}
+
+.score-card {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 12px 30px rgba(255, 107, 53, 0.16);
+    padding: 26px;
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.score-number {
+    display: block;
+    font-family: "ZCOOL KuaiLe", "PingFang SC", sans-serif;
+    color: #ff6b35;
+    font-size: 96px;
+    line-height: 1;
+}
+
+.score-label {
+    display: block;
+    margin-top: 8px;
+    color: #636e72;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    margin-top: 18px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 50px;
+    font-weight: 900;
+}
+
+.stat-value.success {
+    color: #06d6a0;
+}
+
+.stat-value.error {
+    color: #ef476f;
+}
+
+.stat-label {
+    display: block;
+    margin-top: 4px;
+    color: #636e72;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.badge-card {
+    background: linear-gradient(135deg, #ffd166 0%, #ffe082 100%);
+    border-radius: 22px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: auto;
+}
+
+.badge-icon {
+    font-size: 56px;
+}
+
+.badge-title {
+    display: block;
+    font-size: 28px;
+    font-weight: 900;
+    color: #2d3436;
+}
+
+.badge-desc {
+    display: block;
+    margin-top: 4px;
+    font-size: 22px;
+    color: #636e72;
+}
+
+.actions-row {
+    display: flex;
+    gap: 12px;
+}
+
+.primary-btn,
+.secondary-btn {
+    flex: 1;
+    height: 86px;
+    border-radius: 999px;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+    border: 0;
+    color: #fff;
+}
+
+.secondary-btn {
+    background: #fff;
+    border: 3px solid #ffd166;
+    color: #2d3436;
+}
+
+.share-link {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 24px;
+    color: #ff6b35;
+    font-weight: 800;
+}

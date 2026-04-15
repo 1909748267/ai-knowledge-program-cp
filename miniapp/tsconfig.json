@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "jsx": "react-jsx",
+        "strict": true,
+        "ignoreDeprecations": "6.0",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        },
+        "types": [
+            "node",
+            "@tarojs/taro",
+            "@tarojs/components"
+        ],
+        "lib": [
+            "es2018",
+            "dom"
+        ],
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true
+    },
+    "include": [
+        "src",
+        "config",
+        "types",
+        "global.d.ts"
+    ]
+}

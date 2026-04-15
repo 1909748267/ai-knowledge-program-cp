@@ -1,0 +1,54 @@
+:root {
+  --primary: #ff6b35;
+  --primary-dark: #e55a2b;
+  --primary-light: #ffb088;
+  --secondary: #ffd166;
+  --secondary-light: #ffe082;
+  --success: #06d6a0;
+  --success-light: #a8f0dc;
+  --success-dark: #05a67c;
+  --error: #ef476f;
+  --error-light: #ffb3c1;
+  --error-dark: #c73355;
+  --bg: #fff8f0;
+  --bg-warm: #fff0e0;
+  --text: #2d3436;
+  --text-muted: #636e72;
+  --shadow: 0 8px 24px rgba(255, 107, 53, 0.14);
+  --radius: 20px;
+}
+
+page {
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 100%);
+  min-height: 100%;
+  color: var(--text);
+  font-family: "Nunito", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #ffffff;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  border: 3px solid var(--secondary);
+  color: var(--text);
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.page-wrap {
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+}

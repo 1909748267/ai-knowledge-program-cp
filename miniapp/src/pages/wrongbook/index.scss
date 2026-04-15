@@ -1,0 +1,42 @@
+.placeholder-page {
+    min-height: 100vh;
+    padding: 36px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.icon {
+    font-size: 92px;
+    margin-bottom: 12px;
+}
+
+.title {
+    display: block;
+    font-family: "ZCOOL KuaiLe", "PingFang SC", sans-serif;
+    color: #ff6b35;
+    font-size: 44px;
+    margin-bottom: 8px;
+}
+
+.desc {
+    display: block;
+    color: #636e72;
+    font-size: 25px;
+    line-height: 1.5;
+    margin-bottom: 22px;
+}
+
+.back-home {
+    width: 100%;
+    height: 86px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+    color: #fff;
+    font-size: 30px;
+    font-weight: 900;
+}

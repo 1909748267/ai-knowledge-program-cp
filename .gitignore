@@ -1,0 +1,20 @@
+# Node
+miniapp/node_modules/
+miniapp/dist/
+
+# Python
+backend/.venv/
+backend/.pytest_cache/
+backend/logs/
+backend/.env
+**/__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Build caches
+miniapp/.swc/
