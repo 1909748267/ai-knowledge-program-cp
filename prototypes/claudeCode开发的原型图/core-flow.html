@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI闯关学习助手 - 核心流程原型</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --secondary: #FFD166;
+            --success: #06D6A0;
+            --success-light: #A8F0DC;
+            --error: #EF476F;
+            --error-light: #FFB3C1;
+            --bg: #FFF8F0;
+            --bg-warm: #FFF0E0;
+            --card: #FFFFFF;
+            --text: #2D3436;
+            --text-muted: #636E72;
+            --shadow: 0 8px 32px rgba(255, 107, 53, 0.15);
+            --shadow-hover: 0 12px 40px rgba(255, 107, 53, 0.25);
+            --radius: 20px;
+            --radius-lg: 28px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #FFF8F0 0%, #FFE8D6 50%, #FFF0E0 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Comic-style background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 80%, var(--secondary) 0%, transparent 8%),
+                radial-gradient(circle at 80% 20%, var(--primary) 0%, transparent 6%),
+                radial-gradient(circle at 40% 40%, var(--success) 0%, transparent 4%);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: clamp(32px, 5vw, 48px);
+            color: var(--primary);
+            text-shadow: 4px 4px 0 var(--secondary);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .page-label {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Phone Frame Grid */
+        .phone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .phone-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .phone-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 20px;
+            color: var(--text);
+            margin-bottom: 16px;
+            background: white;
+            padding: 8px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border: 3px solid var(--secondary);
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 580px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 44px;
+            padding: 12px;
+            box-shadow:
+                0 25px 60px rgba(0,0,0,0.3),
+                inset 0 2px 4px rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 24px;
+            background: #0a0a15;
+            border-radius: 20px;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            padding: 12px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* ===== PAGE 1: HOME ===== */
+        .home-page {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 100%);
+        }
+
+        .home-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .mascot-container {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .home-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .home-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(255, 107, 53, 0.5);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .home-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .home-divider::before,
+        .home-divider::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+        }
+
+        .home-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-ghost {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--secondary);
+            padding: 10px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        /* ===== PAGE 2: INPUT ===== */
+        .input-page {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: var(--bg);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 2px solid var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .page-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 22px;
+            color: var(--text);
+        }
+
+        .input-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        .input-textarea {
+            width: 100%;
+            height: 100px;
+            border: 3px dashed var(--secondary);
+            border-radius: 16px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+
+        .input-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .input-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .upload-options {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .upload-btn {
+            flex: 1;
+            background: white;
+            border: 3px solid var(--bg-warm);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .upload-icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .upload-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .setting-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .setting-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .option-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--bg-warm);
+            border-radius: 12px;
+            background: white;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .option-btn:not(.active):hover {
+            border-color: var(--secondary);
+        }
+
+        .btn-generate {
+            width: 100%;
+            margin-top: auto;
+            padding: 18px;
+            font-size: 18px;
+        }
+
+        /* ===== PAGE 3: QUIZ ===== */
+        .quiz-page {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 100%);
+        }
+
+        .progress-section {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            border-radius: 20px;
+            width: 60%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .question-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--text);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 18px;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-item {
+            background: var(--bg);
+            border: 3px solid transparent;
+            border-radius: 16px;
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-item:hover {
+            border-color: var(--secondary);
+            transform: translateX(4px);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .swipe-hint {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* ===== PAGE 4: QUIZ WITH FEEDBACK ===== */
+        .feedback-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feedback-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .feedback-icon {
+            font-size: 60px;
+            margin-bottom: 8px;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .feedback-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .feedback-title.correct {
+            color: var(--success);
+        }
+
+        .feedback-title.wrong {
+            color: var(--error);
+        }
+
+        .explanation-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            flex: 1;
+        }
+
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .explanation-text {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .btn-next {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        /* Wrong feedback specific */
+        .feedback-overlay.wrong .feedback-icon {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* ===== PAGE 5: RESULTS ===== */
+        .result-page {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 100%);
+            text-align: center;
+        }
+
+        .result-header {
+            margin-bottom: 20px;
+        }
+
+        .result-trophy {
+            font-size: 60px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .result-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 26px;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        .score-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .score-number {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 64px;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 3px 3px 0 var(--secondary);
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .score-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .stat-value.correct {
+            color: var(--success);
+        }
+
+        .stat-value.wrong {
+            color: var(--error);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .badge-card {
+            background: linear-gradient(135deg, var(--secondary) 0%, #FFE082 100%);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-icon {
+            font-size: 32px;
+        }
+
+        .badge-text {
+            text-align: left;
+        }
+
+        .badge-title {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .badge-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: white;
+            color: var(--text);
+            border: 3px solid var(--secondary);
+            padding: 14px;
+            border-radius: 50px;
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-primary.small {
+            flex: 1;
+            padding: 14px;
+            font-size: 14px;
+        }
+
+        .share-link {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ===== PAGE 6: ANALYSIS ===== */
+        .analysis-page {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: var(--bg);
+            overflow-y: auto;
+        }
+
+        .analysis-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+        }
+
+        .analysis-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .analysis-card-icon {
+            font-size: 20px;
+        }
+
+        .analysis-card-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .analysis-summary {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .weak-point {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .weak-point:last-child {
+            margin-bottom: 0;
+        }
+
+        .weak-point-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--error);
+            margin-bottom: 4px;
+        }
+
+        .weak-point-suggestion {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .step-list {
+            list-style: none;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--bg);
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .btn-home {
+            width: 100%;
+            margin-top: auto;
+            padding: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .phone-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .phone-frame {
+                width: 260px;
+                height: 540px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI闯关学习助手</h1>
+        <p>核心流程原型 · MVP页面展示</p>
+    </div>
+
+    <div class="phone-grid">
+        <!-- Page 1: Home -->
+        <div class="phone-wrapper">
+            <div class="phone-title">1. 首页</div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="home-page">
+                        <div class="home-hero">
+                            <div class="mascot-container">📚</div>
+                            <h1 class="home-title">AI闯关学习</h1>
+                            <p class="home-subtitle">把知识变成闯关游戏</p>
+                            <button class="btn-primary">开始学习 🚀</button>
+                            <div class="home-divider">或</div>
+                            <div class="home-links">
+                                <button class="btn-ghost">错题本</button>
+                                <button class="btn-ghost">学习记录</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Input -->
+        <div class="phone-wrapper">
+            <div class="phone-title">2. 输入页</div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="input-page">
+                        <div class="page-header">
+                            <button class="back-btn">←</button>
+                            <h2 class="page-title">输入学习内容</h2>
+                        </div>
+
+                        <div class="input-card">
+                            <div class="textarea-wrapper">
+                                <textarea class="input-textarea" placeholder="粘贴你想学习的文本内容...
+
+支持文章、笔记、教材等
+最多5000字">机器学习是人工智能的一个分支，它使计算机系统能够从数据中学习并改进其性能，而无需进行明确的编程...</textarea>
+                                <div class="char-count">156 / 5000</div>
+                            </div>
+                            <div class="upload-options">
+                                <div class="upload-btn">
+                                    <div class="upload-icon">🔗</div>
+                                    <div class="upload-text">粘贴链接</div>
+                                </div>
+                                <div class="upload-btn">
+                                    <div class="upload-icon">📄</div>
+                                    <div class="upload-text">上传文件</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <div class="setting-row">
+                                <span class="setting-label">题目数量</span>
+                                <div class="setting-options">
+                                    <button class="option-btn active">5题</button>
+                                    <button class="option-btn">10题</button>
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <span class="setting-label">难度级别</span>
+                                <div class="setting-options">
+                                    <button class="option-btn active">入门</button>
+                                    <button class="option-btn">进阶</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary btn-generate">生成闯关 🔥</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Quiz -->
+        <div class="phone-wrapper">
+            <div class="phone-title">3. 题目页</div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:42</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="quiz-page">
+                        <div class="progress-section">
+                            <div class="progress-header">
+                                <span class="progress-text">闯关进度</span>
+                                <span class="progress-text">3 / 5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+
+                        <div class="question-card">
+                            <span class="question-badge">📖 第3题</span>
+                            <p class="question-text">什么是机器学习？</p>
+                            <div class="options-list">
+                                <div class="option-item">
+                                    <span class="option-letter">A</span>
+                                    <span>一种编程语言</span>
+                                </div>
+                                <div class="option-item">
+                                    <span class="option-letter">B</span>
+                                    <span>从数据中学习规律的方法</span>
+                                </div>
+                                <div class="option-item selected">
+                                    <span class="option-letter">C</span>
+                                    <span>数据库技术</span>
+                                </div>
+                                <div class="option-item">
+                                    <span class="option-letter">D</span>
+                                    <span>网页开发框架</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swipe-hint">
+                            <span>←</span> 左滑下一题
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Quiz Feedback (Correct) -->
+        <div class="phone-wrapper">
+            <div class="phone-title">4. 答题反馈</div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:42</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="quiz-page">
+                        <div class="progress-section">
+                            <div class="progress-header">
+                                <span class="progress-text">闯关进度</span>
+                                <span class="progress-text">3 / 5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+
+                        <div class="question-card" style="position: relative;">
+                            <div class="feedback-overlay">
+                                <div class="feedback-header">
+                                    <div class="feedback-icon">✅</div>
+                                    <h3 class="feedback-title correct">太棒了！正确！</h3>
+                                </div>
+                                <div class="explanation-card">
+                                    <div class="explanation-header">
+                                        <span>💡</span>
+                                        <span>知识点解析</span>
+                                    </div>
+                                    <p class="explanation-text">
+                                        <strong>机器学习基础</strong><br><br>
+                                        机器学习是人工智能的一个分支，它使计算机系统能够从数据中学习并改进其性能，而无需进行明确的编程。<br><br>
+                                        核心特点：数据驱动、自动优化、无需显式编程。
+                                    </p>
+                                </div>
+                                <button class="btn-primary btn-next">下一题 →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 5: Results -->
+        <div class="phone-wrapper">
+            <div class="phone-title">5. 结算页</div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:45</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="result-page">
+                        <div class="result-header">
+                            <div class="result-trophy">🎉</div>
+                            <h2 class="result-title">闯关完成！</h2>
+                        </div>
+
+                        <div class="score-card">
+                            <div class="score-number">85</div>
+                            <div class="score-label">你的得分</div>
+                            <div class="score-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value correct">4</div>
+                                    <div class="stat-label">正确</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value wrong">1</div>
+                                    <div class="stat-label">错误</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="badge-card">
+                            <span class="badge-icon">🏅</span>
+                            <div class="badge-text">
+                                <div class="badge-title">知识达人</div>
+                                <div class="badge-desc">正确率超过80%获得</div>
+                            </div>
+                        </div>
+
+                        <div class="result-actions">
+                            <button class="btn-secondary">查看分析</button>
+                            <button class="btn-primary small">再来一遍</button>
+                        </div>
+
+                        <div class="share-link">🔗 分享给好友</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 6: Analysis -->
+        <div class="phone-wrapper">
+            <div class="phone-title">6. 分析报告</div>
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:46</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="analysis-page">
+                        <div class="page-header">
+                            <button class="back-btn">←</button>
+                            <h2 class="page-title">📊 学习报告</h2>
+                        </div>
+
+                        <div class="analysis-card">
+                            <div class="analysis-card-header">
+                                <span class="analysis-card-icon">📝</span>
+                                <span class="analysis-card-title">整体评价</span>
+                            </div>
+                            <p class="analysis-summary">
+                                你掌握了85%的知识点，表现优秀！对机器学习的基础概念理解较好，建议继续深入学习高级应用。
+                            </p>
+                        </div>
+
+                        <div class="analysis-card">
+                            <div class="analysis-card-header">
+                                <span class="analysis-card-icon">⚠️</span>
+                                <span class="analysis-card-title">薄弱知识点</span>
+                            </div>
+                            <div class="weak-point">
+                                <div class="weak-point-title">高级应用场景</div>
+                                <div class="weak-point-suggestion">建议重新阅读原文相关段落</div>
+                            </div>
+                            <div class="weak-point">
+                                <div class="weak-point-title">模型评估指标</div>
+                                <div class="weak-point-suggestion">建议查阅补充资料</div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-card">
+                            <div class="analysis-card-header">
+                                <span class="analysis-card-icon">📋</span>
+                                <span class="analysis-card-title">下一步建议</span>
+                            </div>
+                            <ul class="step-list">
+                                <li class="step-item">
+                                    <span class="step-number">1</span>
+                                    <span class="step-text">复习错题本中的题目</span>
+                                </li>
+                                <li class="step-item">
+                                    <span class="step-number">2</span>
+                                    <span class="step-text">查阅原文相关段落</span>
+                                </li>
+                                <li class="step-item">
+                                    <span class="step-number">3</span>
+                                    <span class="step-text">再做一遍练习巩固</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <button class="btn-primary btn-home">返回首页 →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add subtle interactions
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

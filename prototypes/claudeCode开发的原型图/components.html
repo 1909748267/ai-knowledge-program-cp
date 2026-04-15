@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI闯关学习助手 - 组件库</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --primary-light: #FFB088;
+            --secondary: #FFD166;
+            --secondary-light: #FFE082;
+            --success: #06D6A0;
+            --success-light: #A8F0DC;
+            --success-dark: #05A67C;
+            --error: #EF476F;
+            --error-light: #FFB3C1;
+            --error-dark: #C73355;
+            --bg: #FFF8F0;
+            --bg-warm: #FFF0E0;
+            --bg-cool: #F0F4F8;
+            --card: #FFFFFF;
+            --text: #2D3436;
+            --text-muted: #636E72;
+            --text-light: #B2BEC3;
+            --shadow: 0 8px 32px rgba(255, 107, 53, 0.12);
+            --shadow-sm: 0 4px 16px rgba(255, 107, 53, 0.08);
+            --shadow-lg: 0 16px 48px rgba(255, 107, 53, 0.2);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 50%, #FFE8D6 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        /* Decorative background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 10% 20%, var(--secondary) 0%, transparent 5%),
+                radial-gradient(circle at 90% 80%, var(--primary) 0%, transparent 4%),
+                radial-gradient(circle at 50% 50%, var(--success) 0%, transparent 3%);
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: clamp(32px, 5vw, 48px);
+            color: var(--primary);
+            text-shadow: 4px 4px 0 var(--secondary);
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* Component Grid */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .component-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow);
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .component-section:hover {
+            border-color: var(--secondary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 3px dashed var(--bg-warm);
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-light) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 22px;
+            color: var(--text);
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 28px rgba(255, 107, 53, 0.45);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Secondary Button */
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 3px solid var(--secondary);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Ghost Button */
+        .btn-ghost {
+            background: transparent;
+            color: var(--primary);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            border: 2px dashed var(--primary-light);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-warm);
+            border-style: solid;
+        }
+
+        /* Success Button */
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(6, 214, 160, 0.4);
+        }
+
+        /* Small Buttons */
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 13px;
+        }
+
+        /* Large Button */
+        .btn-large {
+            padding: 18px 48px;
+            font-size: 18px;
+        }
+
+        /* Disabled Button */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Icon Button */
+        .btn-icon {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 20px;
+        }
+
+        .btn-icon.small {
+            width: 36px;
+            height: 36px;
+            font-size: 16px;
+        }
+
+        /* ===== CARDS ===== */
+        .card-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Card with accent border */
+        .card-accent {
+            border-left: 5px solid var(--primary);
+        }
+
+        .card-accent.success {
+            border-left-color: var(--success);
+        }
+
+        .card-accent.error {
+            border-left-color: var(--error);
+        }
+
+        /* Card with header */
+        .card-header {
+            background: var(--bg-warm);
+            margin: -20px -20px 16px -20px;
+            padding: 16px 20px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .card-header h4 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        /* Card content */
+        .card-content {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Highlight Card */
+        .card-highlight {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            color: var(--text);
+        }
+
+        /* ===== PROGRESS BARS ===== */
+        .progress-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .progress-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress-track {
+            height: 14px;
+            background: var(--bg-warm);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-fill.primary {
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+        }
+
+        .progress-fill.success {
+            background: linear-gradient(90deg, var(--success-light), var(--success));
+        }
+
+        .progress-fill.secondary {
+            background: linear-gradient(90deg, var(--secondary-light), var(--secondary));
+        }
+
+        .progress-fill.error {
+            background: linear-gradient(90deg, var(--error-light), var(--error));
+        }
+
+        /* Animated shimmer */
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Thin progress */
+        .progress-thin {
+            height: 6px;
+        }
+
+        .progress-thin .progress-fill::after {
+            display: none;
+        }
+
+        /* Step Progress */
+        .step-progress {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .step-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-dot.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .step-dot.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 4px;
+            background: var(--bg-warm);
+            margin: 0 -4px;
+        }
+
+        .step-line.active {
+            background: var(--success);
+        }
+
+        /* ===== FEEDBACK STATES ===== */
+        .feedback-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feedback-card {
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .feedback-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .feedback-content {
+            flex: 1;
+        }
+
+        .feedback-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .feedback-text {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Success State */
+        .feedback-success {
+            background: linear-gradient(135deg, var(--success-light) 0%, #D4F8ED 100%);
+            border: 2px solid var(--success);
+        }
+
+        .feedback-success .feedback-icon {
+            background: white;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .feedback-success .feedback-title {
+            color: var(--success-dark);
+        }
+
+        .feedback-success .feedback-text {
+            color: #048A67;
+        }
+
+        /* Error State */
+        .feedback-error {
+            background: linear-gradient(135deg, var(--error-light) 0%, #FFE0E6 100%);
+            border: 2px solid var(--error);
+        }
+
+        .feedback-error .feedback-icon {
+            background: white;
+            animation: shake 0.5s ease;
+        }
+
+        .feedback-error .feedback-title {
+            color: var(--error-dark);
+        }
+
+        .feedback-error .feedback-text {
+            color: #A82845;
+        }
+
+        /* Warning State */
+        .feedback-warning {
+            background: linear-gradient(135deg, var(--secondary-light) 0%, #FFF3D4 100%);
+            border: 2px solid var(--secondary);
+        }
+
+        .feedback-warning .feedback-icon {
+            background: white;
+        }
+
+        .feedback-warning .feedback-title {
+            color: #B8860B;
+        }
+
+        .feedback-warning .feedback-text {
+            color: #8B6914;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        /* Mini Feedback */
+        .feedback-mini {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .feedback-mini.success {
+            background: var(--success-light);
+            color: var(--success-dark);
+        }
+
+        .feedback-mini.error {
+            background: var(--error-light);
+            color: var(--error-dark);
+        }
+
+        /* ===== INPUTS ===== */
+        .input-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            border: 3px solid var(--bg-warm);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--text);
+            background: var(--bg);
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-light);
+        }
+
+        /* Input with icon */
+        .input-icon-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        .input-field.has-icon {
+            padding-left: 48px;
+        }
+
+        /* Textarea */
+        .textarea-field {
+            min-height: 100px;
+            resize: vertical;
+            border: 3px dashed var(--secondary);
+        }
+
+        .textarea-field:focus {
+            border-style: solid;
+            border-color: var(--primary);
+        }
+
+        /* Input states */
+        .input-field.success {
+            border-color: var(--success);
+            background: white;
+        }
+
+        .input-field.error {
+            border-color: var(--error);
+            background: white;
+        }
+
+        .input-helper {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .input-helper.error {
+            color: var(--error);
+        }
+
+        /* Search Input */
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            padding-right: 48px;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        /* ===== OPTIONS ===== */
+        .option-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: var(--bg);
+            border: 3px solid transparent;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-item:hover {
+            border-color: var(--secondary);
+            transform: translateX(4px);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option-item.correct {
+            border-color: var(--success);
+            background: linear-gradient(135deg, white 0%, var(--success-light) 100%);
+        }
+
+        .option-item.wrong {
+            border-color: var(--error);
+            background: linear-gradient(135deg, white 0%, var(--error-light) 100%);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--primary);
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-item.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option-item.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option-item.wrong .option-letter {
+            background: var(--error);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .option-icon {
+            font-size: 20px;
+        }
+
+        /* Radio/Checkbox style */
+        .choice-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+        }
+
+        .choice-circle {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--text-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .choice-item.active .choice-circle {
+            border-color: var(--primary);
+        }
+
+        .choice-circle::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s;
+        }
+
+        .choice-item.active .choice-circle::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .choice-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Toggle Switch */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle {
+            width: 52px;
+            height: 28px;
+            background: var(--bg-warm);
+            border-radius: 20px;
+            padding: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--success);
+        }
+
+        .toggle-knob {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toggle.active .toggle-knob {
+            transform: translateX(24px);
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-row {
+                flex-direction: column;
+            }
+
+            .btn-row .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>UI组件库</h1>
+        <p>AI闯关学习助手 · 设计系统</p>
+    </div>
+
+    <div class="component-grid">
+        <!-- Buttons Section -->
+        <div class="component-section">
+            <div class="section-header">
+                <div class="section-icon">🔘</div>
+                <div>
+                    <h3 class="section-title">按钮样式</h3>
+                    <p class="section-subtitle">Buttons</p>
+                </div>
+            </div>
+
+            <div class="btn-showcase">
+                <div class="btn-row">
+                    <button class="btn btn-primary">主要按钮</button>
+                    <button class="btn btn-secondary">次要按钮</button>
+                    <button class="btn btn-ghost">幽灵按钮</button>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-success">✅ 确认操作</button>
+                    <button class="btn btn-primary" style="background: linear-gradient(135deg, var(--error), var(--error-dark));">❌ 取消操作</button>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-primary btn-small">小按钮</button>
+                    <button class="btn btn-primary">默认</button>
+                    <button class="btn btn-primary btn-large">大按钮</button>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-primary btn-icon">+</button>
+                    <button class="btn btn-secondary btn-icon">♥</button>
+                    <button class="btn btn-ghost btn-icon small">←</button>
+                    <button class="btn btn-primary" disabled>禁用状态</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Section -->
+        <div class="component-section">
+            <div class="section-header">
+                <div class="section-icon">🃏</div>
+                <div>
+                    <h3 class="section-title">卡片样式</h3>
+                    <p class="section-subtitle">Cards</p>
+                </div>
+            </div>
+
+            <div class="card-showcase">
+                <div class="card card-accent">
+                    <p class="card-content">这是一张基础卡片，带有左侧强调边框。适合展示重要信息。</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4>📖 带标题的卡片</h4>
+                    </div>
+                    <p class="card-content">卡片可以包含标题区域，用于区分内容层级。</p>
+                </div>
+
+                <div class="card card-accent success">
+                    <p class="card-content">✅ 成功状态的卡片，用于展示正面反馈或确认信息。</p>
+                </div>
+
+                <div class="card card-accent error">
+                    <p class="card-content">❌ 错误状态的卡片，用于展示警告或错误信息。</p>
+                </div>
+
+                <div class="card card-highlight">
+                    <p class="card-content">⭐ 高亮卡片适合吸引注意，常用于重要提示或推荐内容。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="component-section">
+            <div class="section-header">
+                <div class="section-icon">📊</div>
+                <div>
+                    <h3 class="section-title">进度条</h3>
+                    <p class="section-subtitle">Progress Bars</p>
+                </div>
+            </div>
+
+            <div class="progress-showcase">
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">闯关进度</span>
+                        <span class="progress-value">60%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill primary" style="width: 60%;"></div>
+                    </div>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">正确率</span>
+                        <span class="progress-value" style="color: var(--success);">85%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill success" style="width: 85%;"></div>
+                    </div>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">学习时长</span>
+                        <span class="progress-value">30分钟</span>
+                    </div>
+                    <div class="progress-track progress-thin">
+                        <div class="progress-fill secondary" style="width: 45%;"></div>
+                    </div>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-label">答题步骤</span>
+                    </div>
+                    <div class="step-progress">
+                        <div class="step-dot completed">✓</div>
+                        <div class="step-line active"></div>
+                        <div class="step-dot completed">✓</div>
+                        <div class="step-line active"></div>
+                        <div class="step-dot active">3</div>
+                        <div class="step-line"></div>
+                        <div class="step-dot">4</div>
+                        <div class="step-line"></div>
+                        <div class="step-dot">5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="component-section">
+            <div class="section-header">
+                <div class="section-icon">💬</div>
+                <div>
+                    <h3 class="section-title">反馈状态</h3>
+                    <p class="section-subtitle">Feedback States</p>
+                </div>
+            </div>
+
+            <div class="feedback-showcase">
+                <div class="feedback-card feedback-success">
+                    <div class="feedback-icon">✅</div>
+                    <div class="feedback-content">
+                        <div class="feedback-title">回答正确！</div>
+                        <div class="feedback-text">太棒了！你对这个知识点的理解非常到位。继续保持！</div>
+                    </div>
+                </div>
+
+                <div class="feedback-card feedback-error">
+                    <div class="feedback-icon">❌</div>
+                    <div class="feedback-content">
+                        <div class="feedback-title">回答错误</div>
+                        <div class="feedback-text">别灰心！正确答案是B。机器学习是从数据中学习规律的方法。</div>
+                    </div>
+                </div>
+
+                <div class="feedback-card feedback-warning">
+                    <div class="feedback-icon">⚠️</div>
+                    <div class="feedback-content">
+                        <div class="feedback-title">需要注意</div>
+                        <div class="feedback-text">这个知识点你之前答错过，建议重点复习。</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <span class="feedback-mini success">✓ 正确</span>
+                    <span class="feedback-mini error">✗ 错误</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inputs Section -->
+        <div class="component-section">
+            <div class="section-header">
+                <div class="section-icon">✏️</div>
+                <div>
+                    <h3 class="section-title">输入框</h3>
+                    <p class="section-subtitle">Inputs</p>
+                </div>
+            </div>
+
+            <div class="input-showcase">
+                <div class="input-group">
+                    <label class="input-label">默认输入框</label>
+                    <input type="text" class="input-field" placeholder="请输入内容...">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">带图标的输入框</label>
+                    <div class="input-icon-wrapper">
+                        <span class="input-icon">📧</span>
+                        <input type="email" class="input-field has-icon" placeholder="输入邮箱地址">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">搜索框</label>
+                    <div class="search-wrapper">
+                        <input type="text" class="input-field search-input" placeholder="搜索知识点...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">文本域</label>
+                    <textarea class="input-field textarea-field" placeholder="粘贴你的学习内容..."></textarea>
+                    <span class="input-helper">已输入 0 / 5000 字</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">验证状态</label>
+                    <input type="text" class="input-field success" value="正确的输入">
+                    <span class="input-helper" style="color: var(--success);">✓ 格式正确</span>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" class="input-field error" value="错误的输入">
+                    <span class="input-helper error">✗ 请输入有效的内容</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Options Section -->
+        <div class="component-section">
+            <div class="section-header">
+                <div class="section-icon">📋</div>
+                <div>
+                    <h3 class="section-title">选择项</h3>
+                    <p class="section-subtitle">Options & Choices</p>
+                </div>
+            </div>
+
+            <div class="option-showcase">
+                <div class="option-item">
+                    <span class="option-letter">A</span>
+                    <span class="option-text">选项一（默认状态）</span>
+                </div>
+
+                <div class="option-item selected">
+                    <span class="option-letter">B</span>
+                    <span class="option-text">选项二（选中状态）</span>
+                </div>
+
+                <div class="option-item correct">
+                    <span class="option-letter">C</span>
+                    <span class="option-text">选项三（正确答案）</span>
+                    <span class="option-icon">✅</span>
+                </div>
+
+                <div class="option-item wrong">
+                    <span class="option-letter">D</span>
+                    <span class="option-text">选项四（错误选择）</span>
+                    <span class="option-icon">❌</span>
+                </div>
+
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 2px dashed var(--bg-warm);">
+                    <div class="choice-item active">
+                        <div class="choice-circle"></div>
+                        <span class="choice-label">单选选项 - 已选中</span>
+                    </div>
+                    <div class="choice-item">
+                        <div class="choice-circle"></div>
+                        <span class="choice-label">单选选项 - 未选中</span>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper" style="margin-top: 12px;">
+                    <div class="toggle active" onclick="this.classList.toggle('active')">
+                        <div class="toggle-knob"></div>
+                    </div>
+                    <span class="toggle-label">开启提示音效</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity for options
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const isCorrect = this.classList.contains('correct') || this.classList.contains('wrong');
+                if (!isCorrect) {
+                    // Only toggle selection for non-answer-revealed items
+                    const parent = this.parentElement;
+                    parent.querySelectorAll('.option-item:not(.correct):not(.wrong)').forEach(i => {
+                        i.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                }
+            });
+        });
+
+        // Choice items toggle
+        document.querySelectorAll('.choice-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.choice-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

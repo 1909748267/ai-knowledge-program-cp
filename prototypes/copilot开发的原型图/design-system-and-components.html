@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 闯关学习助手 - 设计系统与组件原型</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+        :root {
+            --ink: #1f1f1f;
+            --paper: #fff8e3;
+            --line: #242424;
+            --red: #ff544c;
+            --blue: #33a5ff;
+            --green: #43c879;
+            --yellow: #ffd64f;
+            --violet: #7f82ff;
+            --shadow: 8px 10px 0 #1f1f1f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+            background:
+                radial-gradient(circle at 12% 12%, #d7efff, transparent 40%),
+                radial-gradient(circle at 82% 18%, #ffe3da, transparent 38%),
+                radial-gradient(circle at 40% 85%, #fff0b9, transparent 45%),
+                repeating-linear-gradient(-8deg, rgba(0, 0, 0, .02), rgba(0, 0, 0, .02) 2px, rgba(255, 255, 255, .2) 2px, rgba(255, 255, 255, .2) 9px),
+                #fff0cb;
+            min-height: 100vh;
+            padding: 26px 16px 36px;
+        }
+
+        .hero {
+            max-width: 1320px;
+            margin: 0 auto 20px;
+            border: 3px solid var(--line);
+            border-radius: 18px 25px 18px 25px;
+            background: linear-gradient(95deg, #fff9ec 0%, #fffefb 60%, #ffebd0 100%);
+            box-shadow: var(--shadow);
+            padding: 16px 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "Design Kit";
+            position: absolute;
+            right: 12px;
+            top: 8px;
+            font-family: "Long Cang", "Noto Sans SC", sans-serif;
+            font-size: 34px;
+            color: rgba(0, 0, 0, 0.17);
+            transform: rotate(-7deg);
+        }
+
+        h1 {
+            margin: 0;
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            font-size: clamp(28px, 3.3vw, 40px);
+        }
+
+        .desc {
+            margin-top: 7px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .meta {
+            margin-top: 11px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            border: 2px solid var(--line);
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 800;
+            background: #fff;
+        }
+
+        .group {
+            max-width: 1320px;
+            margin: 0 auto 24px;
+        }
+
+        .group h2 {
+            margin: 0 0 12px;
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            font-size: clamp(22px, 2.3vw, 30px);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 13px;
+            height: 13px;
+            border: 2px solid var(--line);
+            border-radius: 50%;
+            box-shadow: 2px 2px 0 #1d1d1d;
+        }
+
+        .dot.a {
+            background: var(--red);
+        }
+
+        .dot.b {
+            background: var(--blue);
+        }
+
+        .dot.c {
+            background: var(--green);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            border: 3px solid var(--line);
+            border-radius: 20px;
+            background: linear-gradient(165deg, #fffdf6 0%, #fff2d2 100%);
+            box-shadow: var(--shadow);
+            padding: 12px;
+            min-height: 300px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(18px) rotate(-.45deg);
+            animation: reveal .65s ease forwards;
+            animation-delay: calc(var(--i) * .06s);
+        }
+
+        .card:nth-child(2n) {
+            transform: translateY(18px) rotate(.45deg);
+        }
+
+        .label {
+            position: absolute;
+            top: -11px;
+            left: 10px;
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            background: #ffe48a;
+            box-shadow: 2px 2px 0 #1e1e1e;
+            font-size: 12px;
+            font-weight: 900;
+            padding: 3px 8px;
+        }
+
+        .sub {
+            margin: 6px 0 10px;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .panel {
+            border: 2px solid #2a2a2a;
+            border-radius: 12px;
+            background: #fff;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .line {
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+
+        .palette {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .swatch {
+            border: 2px solid #222;
+            border-radius: 9px;
+            min-height: 64px;
+            display: grid;
+            place-items: end center;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 4px;
+            color: #1f1f1f;
+            background: #fff;
+        }
+
+        .type-demo {
+            display: grid;
+            gap: 7px;
+        }
+
+        .h-display {
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            font-size: 29px;
+            line-height: 1.1;
+        }
+
+        .h-callout {
+            font-family: "Long Cang", "Noto Sans SC", sans-serif;
+            font-size: 33px;
+            line-height: 1;
+        }
+
+        .body-text {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .btns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            border: 2px solid #1e1e1e;
+            border-radius: 11px;
+            font-size: 12px;
+            font-weight: 900;
+            box-shadow: 3px 3px 0 #1e1e1e;
+            padding: 8px;
+            text-align: center;
+            background: #fff;
+        }
+
+        .btn.red {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn.blue {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .btn.green {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn.disabled {
+            background: #ddd;
+            color: #888;
+            box-shadow: none;
+            border-style: dashed;
+        }
+
+        .input-box {
+            border: 2px dashed #333;
+            border-radius: 11px;
+            background: #fffdf6;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            min-height: 66px;
+        }
+
+        .mini-phone {
+            border: 2px solid #151515;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .mini-head {
+            background: #ffe06f;
+            border-bottom: 2px solid #151515;
+            font-size: 11px;
+            font-weight: 900;
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 8px;
+        }
+
+        .mini-body {
+            padding: 8px;
+            display: grid;
+            gap: 7px;
+        }
+
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip {
+            border: 2px solid #242424;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 6px;
+            background: #ffe5df;
+        }
+
+        .motion {
+            border: 2px solid #262626;
+            border-radius: 12px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .motion-bar {
+            height: 14px;
+            background: repeating-linear-gradient(45deg, #47b2ff, #47b2ff 10px, #9ad8ff 10px, #9ad8ff 20px);
+            width: 20%;
+            animation: move 2.5s ease-in-out infinite;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .step {
+            border: 2px solid #242424;
+            border-radius: 8px;
+            background: #fffef5;
+            min-height: 66px;
+            font-size: 10px;
+            font-weight: 800;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .step.highlight {
+            background: #dff3ff;
+        }
+
+        .breakpoints {
+            display: grid;
+            gap: 7px;
+        }
+
+        .bp {
+            border: 2px solid #2a2a2a;
+            border-radius: 10px;
+            background: #fff;
+            padding: 7px;
+            font-size: 12px;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .guide {
+            max-width: 1320px;
+            margin: 0 auto;
+            border: 2px dashed #333;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .72);
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.5;
+            padding: 10px 12px;
+        }
+
+        @keyframes reveal {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        @keyframes move {
+            0% {
+                width: 20%;
+            }
+
+            50% {
+                width: 88%;
+            }
+
+            100% {
+                width: 28%;
+            }
+        }
+
+        @media (max-width: 1060px) {
+            .row {
+                grid-template-columns: repeat(2, minmax(240px, 1fr));
+            }
+        }
+
+        @media (max-width: 730px) {
+            body {
+                padding: 14px 10px 24px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                min-height: 260px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="hero">
+        <h1>AI 闯关学习助手 · 设计系统与组件原型</h1>
+        <p class="desc">将搞怪吐槽风沉淀成可复用规范：色彩、字体、组件状态、动效节奏、断点策略与文案语气。</p>
+        <div class="meta">
+            <span class="pill">基准原型：mvp-core-flow.html</span>
+            <span class="pill">扩展原型：expansion-features-flow.html</span>
+            <span class="pill">输出目标：可直接指导前端开发</span>
+            <span class="pill">排版：一行三列响应式</span>
+        </div>
+    </header>
+
+    <section class="group">
+        <h2><span class="dot a"></span>第一组：视觉基因</h2>
+        <div class="row">
+            <article class="card" style="--i:1">
+                <span class="label">1. 色彩 Token</span>
+                <h3 class="sub">主色 + 强对比提醒色</h3>
+                <div class="palette">
+                    <div class="swatch" style="background:#ff544c;">Danger</div>
+                    <div class="swatch" style="background:#33a5ff;">Info</div>
+                    <div class="swatch" style="background:#43c879;">Pass</div>
+                    <div class="swatch" style="background:#ffd64f;">Accent</div>
+                    <div class="swatch" style="background:#7f82ff;">Event</div>
+                </div>
+                <div class="panel">
+                    <div class="line">规则：同一屏最多 2 个高饱和主行为色，避免视觉吵架。</div>
+                    <div class="line">背景必须有纹理或网点，不允许纯平空白。</div>
+                </div>
+            </article>
+
+            <article class="card" style="--i:2">
+                <span class="label">2. 字体系统</span>
+                <h3 class="sub">标题有脾气，正文要稳</h3>
+                <div class="type-demo">
+                    <div class="h-display">闯关不是背稿子</div>
+                    <div class="h-callout">错题怪，出来挨打</div>
+                    <div class="body-text">正文使用高可读中文黑体，保证题干与解析在移动端也能快速扫读。</div>
+                </div>
+                <div class="panel">
+                    <div class="line">Display：ZCOOL KuaiLe</div>
+                    <div class="line">Callout：Long Cang</div>
+                    <div class="line">Body：Noto Sans SC</div>
+                </div>
+            </article>
+
+            <article class="card" style="--i:3">
+                <span class="label">3. 版式规则</span>
+                <h3 class="sub">卡片化 + 手账式偏移</h3>
+                <div class="panel">
+                    <div class="line">外层容器：最大宽度 1320，卡片投影统一 8x10 偏移。</div>
+                    <div class="line">倾斜角限制：-0.6 至 0.6 度，保留漫画乱中有序感。</div>
+                    <div class="line">所有关键块必须有 2px 以上描边，保证小程序屏幕清晰。</div>
+                </div>
+                <div class="mini-phone">
+                    <div class="mini-head"><span>布局预览</span><span>3列</span></div>
+                    <div class="mini-body">
+                        <div class="input-box">标题区</div>
+                        <div class="input-box">内容区</div>
+                        <div class="input-box">操作区</div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="group">
+        <h2><span class="dot b"></span>第二组：核心组件</h2>
+        <div class="row">
+            <article class="card" style="--i:4">
+                <span class="label">4. 按钮组件</span>
+                <h3 class="sub">行为等级与状态</h3>
+                <div class="btns">
+                    <div class="btn red">主动作</div>
+                    <div class="btn blue">次动作</div>
+                    <div class="btn green">确认动作</div>
+                    <div class="btn disabled">禁用状态</div>
+                </div>
+                <div class="panel">
+                    <div class="line">点击反馈：位移 2px + 阴影收缩。</div>
+                    <div class="line">风险动作固定红色，禁止复用到普通跳转。</div>
+                </div>
+            </article>
+
+            <article class="card" style="--i:5">
+                <span class="label">5. 输入与题卡</span>
+                <h3 class="sub">题干区、选项区、反馈区</h3>
+                <div class="input-box">题干：哪一种策略更能提升长期记忆？</div>
+                <div class="panel line">A. 反复阅读</div>
+                <div class="panel line" style="background:#dcffe5; border-color:#1d713e;">B. 主动回忆（正确状态）</div>
+                <div class="panel line" style="background:#ffdeda; border-color:#8d2e2b;">C. 临时突击（错误状态）</div>
+                <div class="panel line">反馈区：正确时鼓励，错误时指出误区，不羞辱用户。</div>
+            </article>
+
+            <article class="card" style="--i:6">
+                <span class="label">6. 进度与标签</span>
+                <h3 class="sub">闯关节奏要一眼可知</h3>
+                <div class="motion">
+                    <div class="motion-bar"></div>
+                </div>
+                <div class="chip-row" style="margin-top:8px;">
+                    <span class="chip">新手关</span>
+                    <span class="chip" style="background:#ddf1ff;">进阶关</span>
+                    <span class="chip" style="background:#dcffe7;">Boss 关</span>
+                    <span class="chip" style="background:#fff0c9;">复活中</span>
+                </div>
+                <div class="panel" style="margin-top:8px;">
+                    <div class="line">进度条显示题量完成度，不显示模型调用等待。</div>
+                    <div class="line">长任务另用步骤条，避免用户误解卡顿。</div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="group">
+        <h2><span class="dot c"></span>第三组：动效、文案与适配</h2>
+        <div class="row">
+            <article class="card" style="--i:7">
+                <span class="label">7. 动效节奏板</span>
+                <h3 class="sub">只做高价值动画，不做噪音</h3>
+                <div class="timeline">
+                    <div class="step highlight">页面进入<br>0.6s</div>
+                    <div class="step">答题反馈<br>0.35s</div>
+                    <div class="step">勋章盖章<br>0.5s</div>
+                    <div class="step">榜单刷新<br>0.4s</div>
+                </div>
+                <div class="panel" style="margin-top:8px;">
+                    <div class="line">统一 easing：ease-out 或 cubic-bezier(0.2,0.8,0.2,1)。</div>
+                    <div class="line">禁止无限闪烁，避免影响注意力和可读性。</div>
+                </div>
+            </article>
+
+            <article class="card" style="--i:8">
+                <span class="label">8. 文案语气规范</span>
+                <h3 class="sub">搞怪吐槽，但不冒犯</h3>
+                <div class="panel">
+                    <div class="line">正向示例：这题翻车了，但你比昨天更会找漏洞。</div>
+                    <div class="line">正向示例：错题不是耻辱，是升级材料。</div>
+                    <div class="line">禁用示例：你太笨了、你怎么又错。</div>
+                </div>
+                <div class="mini-phone">
+                    <div class="mini-head"><span>提示弹层</span><span>Tone</span></div>
+                    <div class="mini-body">
+                        <div class="input-box">啊哈，这次没选对。来，看 15 秒纠错卡复活连击。</div>
+                        <div class="btn red">看纠错卡</div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card" style="--i:9">
+                <span class="label">9. 响应式断点</span>
+                <h3 class="sub">桌面评审与小程序预览双适配</h3>
+                <div class="breakpoints">
+                    <div class="bp"><span>Desktop</span><span>大于等于 1060：3 列</span></div>
+                    <div class="bp"><span>Tablet</span><span>730 到 1059：2 列</span></div>
+                    <div class="bp"><span>Mobile</span><span>小于 730：1 列</span></div>
+                </div>
+                <div class="panel" style="margin-top:8px;">
+                    <div class="line">最小触控区域：40px。</div>
+                    <div class="line">题干字号不低于 13px，解析不低于 12px。</div>
+                    <div class="line">同屏操作按钮建议不超过 2 个主按钮。</div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <div class="guide">
+        本文件用于把视觉语言和交互规则固化，避免后续开发阶段出现风格漂移。建议评审顺序：先看视觉基因，再看组件状态，最后确认动效与文案边界。
+    </div>
+</body>
+
+</html>

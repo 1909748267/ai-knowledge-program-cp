@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 闯关学习助手 - 扩展功能原型</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+        :root {
+            --ink: #222;
+            --paper: #fff7e8;
+            --line: #282828;
+            --red: #ff4d55;
+            --blue: #2ca1ff;
+            --green: #34c67a;
+            --violet: #7f7bff;
+            --yellow: #ffd34d;
+            --orange: #ff9347;
+            --shadow: 9px 10px 0 #1f1f1f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 88% 5%, #ffd5cd, transparent 35%),
+                radial-gradient(circle at 10% 12%, #d4f0ff, transparent 40%),
+                radial-gradient(circle at 35% 88%, #ffefb2, transparent 45%),
+                repeating-linear-gradient(14deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.02) 2px, rgba(255, 255, 255, 0.2) 2px, rgba(255, 255, 255, 0.2) 7px),
+                #fff0c7;
+            min-height: 100vh;
+            padding: 28px 16px 36px;
+        }
+
+        .banner {
+            max-width: 1320px;
+            margin: 0 auto 20px;
+            border: 3px solid var(--line);
+            border-radius: 20px 28px 20px 30px;
+            background: linear-gradient(100deg, #fff9ef 0%, #fff 60%, #ffeacf 100%);
+            box-shadow: var(--shadow);
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: "P0-P2 扩展模式";
+            position: absolute;
+            right: 12px;
+            top: 10px;
+            font-family: "Ma Shan Zheng", "Noto Sans SC", sans-serif;
+            font-size: 22px;
+            color: rgba(0, 0, 0, 0.14);
+            transform: rotate(-8deg);
+        }
+
+        .banner h1 {
+            margin: 0;
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            font-size: clamp(28px, 3.4vw, 42px);
+        }
+
+        .banner p {
+            margin: 8px 0 0;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .tags {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            border: 2px solid var(--line);
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            background: #fff;
+            padding: 5px 10px;
+        }
+
+        .section {
+            max-width: 1320px;
+            margin: 0 auto 24px;
+        }
+
+        .section h2 {
+            margin: 0 0 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            font-size: clamp(21px, 2.4vw, 30px);
+        }
+
+        .spark {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            border: 2px solid var(--line);
+            box-shadow: 2px 2px 0 #1a1a1a;
+        }
+
+        .spark.p0 {
+            background: var(--red);
+        }
+
+        .spark.p1 {
+            background: var(--blue);
+        }
+
+        .spark.p2 {
+            background: var(--green);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .frame {
+            border: 3px solid var(--line);
+            border-radius: 22px;
+            background: linear-gradient(170deg, #fffef9 0%, #ffefcc 100%);
+            box-shadow: var(--shadow);
+            padding: 12px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(16px) rotate(-0.5deg);
+            animation: rise 0.65s ease forwards;
+            animation-delay: calc(var(--i) * 0.07s);
+        }
+
+        .frame:nth-child(2n) {
+            transform: translateY(16px) rotate(0.5deg);
+        }
+
+        .label {
+            position: absolute;
+            top: -11px;
+            left: 10px;
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            background: #ffe48b;
+            box-shadow: 2px 3px 0 #1f1f1f;
+            padding: 3px 8px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .phone {
+            min-height: 560px;
+            border: 3px solid #111;
+            border-radius: 24px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #fff, #fff8e8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .head {
+            border-bottom: 2px solid #111;
+            background: #ffe06e;
+            padding: 9px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .content {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .bubble {
+            border: 2px solid var(--line);
+            border-radius: 14px;
+            background: #fff;
+            padding: 8px;
+            font-size: 12px;
+            line-height: 1.45;
+            font-weight: 700;
+        }
+
+        .bubble.red {
+            background: #ffe1dd;
+            transform: rotate(-1deg);
+        }
+
+        .bubble.blue {
+            background: #dff0ff;
+            transform: rotate(1deg);
+        }
+
+        .bubble.green {
+            background: #ddffe6;
+        }
+
+        .panel {
+            border: 2px solid #2b2b2b;
+            border-radius: 12px;
+            background: #fff;
+            padding: 8px;
+        }
+
+        .list {
+            display: grid;
+            gap: 7px;
+        }
+
+        .line {
+            border: 2px solid #2c2c2c;
+            border-radius: 10px;
+            background: #fffbef;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 7px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chip {
+            border: 2px solid #2a2a2a;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 3px 6px;
+            white-space: nowrap;
+            background: #ffe2de;
+        }
+
+        .chip.ok {
+            background: #d9ffe5;
+        }
+
+        .chip.info {
+            background: #ddefff;
+        }
+
+        .btn {
+            border: 2px solid #1f1f1f;
+            border-radius: 11px;
+            background: #fff;
+            box-shadow: 3px 3px 0 #1f1f1f;
+            font-size: 12px;
+            font-weight: 900;
+            padding: 8px;
+            cursor: pointer;
+            transition: transform .2s ease;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #1f1f1f;
+        }
+
+        .btn.red {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn.blue {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .btn.green {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .bar {
+            height: 14px;
+            border: 2px solid #222;
+            border-radius: 999px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .bar>div {
+            height: 100%;
+            width: 46%;
+            background: repeating-linear-gradient(45deg, #4ab4ff, #4ab4ff 10px, #92d5ff 10px, #92d5ff 20px);
+            transition: width .35s ease;
+        }
+
+        .versus {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .role {
+            border: 2px solid #222;
+            border-radius: 11px;
+            background: #fff;
+            text-align: center;
+            padding: 8px 4px;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .time {
+            text-align: center;
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            font-size: 22px;
+            color: #e64a43;
+            border: 2px solid #222;
+            border-radius: 10px;
+            background: #fff;
+            padding: 4px;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+        }
+
+        .step {
+            border: 2px solid #222;
+            border-radius: 8px;
+            min-height: 56px;
+            background: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4px;
+        }
+
+        .step.on {
+            background: #d9ffe6;
+        }
+
+        .note {
+            max-width: 1320px;
+            margin: 0 auto;
+            border: 2px dashed #333;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .72);
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.5;
+            padding: 10px 12px;
+        }
+
+        @keyframes rise {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        @media (max-width: 1060px) {
+            .row {
+                grid-template-columns: repeat(2, minmax(240px, 1fr));
+            }
+        }
+
+        @media (max-width: 730px) {
+            body {
+                padding: 14px 10px 24px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .phone {
+                min-height: 520px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="banner">
+        <h1>AI 闯关学习助手 · 扩展功能原型</h1>
+        <p>延续搞怪吐槽风，把高频留存模块做成可评审页面：知识库、插件入口、视频解析、对战、导出与会员。</p>
+        <div class="tags">
+            <span class="tag">对齐文件：mvp-core-flow.html</span>
+            <span class="tag">结构：每组一行三列</span>
+            <span class="tag">状态：P0-P2 全覆盖</span>
+            <span class="tag">语气：吐槽但不低幼</span>
+        </div>
+    </header>
+
+    <section class="section">
+        <h2><span class="spark p0"></span>P0：知识库与插件链路</h2>
+        <div class="row">
+            <article class="frame" style="--i:1">
+                <span class="label">1. RAG 知识库导入</span>
+                <div class="phone">
+                    <div class="head"><span>09:12</span><span>知识库仓库</span><span>企业版</span></div>
+                    <div class="content">
+                        <div class="bubble red">你的资料像没收拾的书包？来，我给你分科归档。</div>
+                        <div class="panel">
+                            <div class="line"><span>拖拽上传 PDF / Word / Markdown</span><span class="chip info">批量</span>
+                            </div>
+                            <div class="line"><span>支持 OCR 与目录拆分</span><span class="chip ok">自动</span></div>
+                            <div class="line"><span>企业资料可设部门可见</span><span class="chip">权限</span></div>
+                        </div>
+                        <div class="bubble blue">已导入：产品手册V6、培训讲义、FAQ合规规范。</div>
+                        <button class="btn red">开始切片并建立索引</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="frame" style="--i:2">
+                <span class="label">2. 知识集出题</span>
+                <div class="phone">
+                    <div class="head"><span>09:13</span><span>题库范围控制</span><span>RAG</span></div>
+                    <div class="content">
+                        <div class="bubble">你选哪几本，题目就只打哪几本，杜绝乱出题。</div>
+                        <div class="list">
+                            <div class="line"><span>新员工入职手册</span><span class="chip ok">已选</span></div>
+                            <div class="line"><span>客户隐私规范 2026</span><span class="chip ok">已选</span></div>
+                            <div class="line"><span>售后流程图解</span><span class="chip info">可选</span></div>
+                            <div class="line"><span>历史公告归档</span><span class="chip">不参与</span></div>
+                        </div>
+                        <div class="bar">
+                            <div id="ragBar"></div>
+                        </div>
+                        <button class="btn blue">基于选中文档出 20 题</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="frame" style="--i:3">
+                <span class="label">3. 浏览器插件闯关</span>
+                <div class="phone">
+                    <div class="head"><span>09:14</span><span>侧边栏模式</span><span>插件</span></div>
+                    <div class="content">
+                        <div class="bubble green">你在读网页？我在右侧等你，随时拉你进试炼。</div>
+                        <div class="panel">
+                            <div class="line"><span>当前页面：公众号长文</span><span class="chip ok">已解析</span></div>
+                            <div class="line"><span>抓取正文 + 标题层级</span><span class="chip info">完成</span></div>
+                            <div class="line"><span>推荐闯关题数：8 题</span><span class="chip">建议</span></div>
+                        </div>
+                        <button class="btn green">一键开启侧边栏闯关</button>
+                        <div class="bubble red">摸鱼提示：刷资讯 20 分钟，不如刷题 3 分钟。</div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2><span class="spark p1"></span>P1：视频解析与社交对战</h2>
+        <div class="row">
+            <article class="frame" style="--i:4">
+                <span class="label">4. 视频内容解析</span>
+                <div class="phone">
+                    <div class="head"><span>09:16</span><span>视频拆解器</span><span>B站 / YouTube</span></div>
+                    <div class="content">
+                        <div class="bubble blue">把 40 分钟视频压成 10 分钟闯关，不香吗？</div>
+                        <div class="timeline" id="videoTimeline">
+                            <div class="step on">字幕抓取</div>
+                            <div class="step on">章节切分</div>
+                            <div class="step">术语归一</div>
+                            <div class="step">知识点抽取</div>
+                            <div class="step">题目生成</div>
+                        </div>
+                        <div class="panel">
+                            <div class="line"><span>视频时长：43:52</span><span class="chip info">自动</span></div>
+                            <div class="line"><span>提炼知识点：17 个</span><span class="chip ok">完成</span></div>
+                        </div>
+                        <button class="btn blue">生成章节闯关</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="frame" style="--i:5">
+                <span class="label">5. 影子对战</span>
+                <div class="phone">
+                    <div class="head"><span>09:17</span><span>异步 1v1</span><span>好友影子</span></div>
+                    <div class="content">
+                        <div class="bubble red">不在线也能 PK，跟好友历史最高分硬碰硬。</div>
+                        <div class="versus">
+                            <div class="role">你<br>连胜 3 场</div>
+                            <div class="time" id="battleTimer">00:45</div>
+                            <div class="role">好友影子<br>平均 82 分</div>
+                        </div>
+                        <div class="panel">
+                            <div class="line"><span>赛制：10题限时</span><span class="chip">规则</span></div>
+                            <div class="line"><span>奖励：胜者得挑战贴纸</span><span class="chip ok">奖励</span></div>
+                            <div class="line"><span>平局：按答题速度判定</span><span class="chip info">速度</span></div>
+                        </div>
+                        <button class="btn red">发起影子挑战</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="frame" style="--i:6">
+                <span class="label">6. 排行与徽章墙</span>
+                <div class="phone">
+                    <div class="head"><span>09:18</span><span>社区榜单</span><span>每周刷新</span></div>
+                    <div class="content">
+                        <div class="bubble">你本周排第 17 名，再冲 62 分能进前 10。</div>
+                        <div class="list">
+                            <div class="line"><span>#1 学习狂魔-舟舟</span><span class="chip ok">1320</span></div>
+                            <div class="line"><span>#2 卷王终结者-林林</span><span class="chip ok">1288</span></div>
+                            <div class="line"><span>#17 你</span><span class="chip info">956</span></div>
+                        </div>
+                        <div class="panel">
+                            <div class="line"><span>新徽章：连续复盘 7 天</span><span class="chip ok">解锁</span></div>
+                        </div>
+                        <button class="btn green">查看我的徽章墙</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2><span class="spark p2"></span>P2：多模态、导出与增长</h2>
+        <div class="row">
+            <article class="frame" style="--i:7">
+                <span class="label">7. 多模态增强</span>
+                <div class="phone">
+                    <div class="head"><span>09:21</span><span>题目增强器</span><span>TTS + 插图</span></div>
+                    <div class="content">
+                        <div class="bubble green">难题别硬啃，给你配图配语音，脑子少走弯路。</div>
+                        <div class="panel">
+                            <div class="line"><span>题图生成：流程图风格</span><span class="chip ok">开</span></div>
+                            <div class="line"><span>语音读题：元气男声</span><span class="chip info">开</span></div>
+                            <div class="line"><span>术语高亮：自动标注</span><span class="chip ok">开</span></div>
+                        </div>
+                        <button class="btn blue">试听并预览插图</button>
+                        <div class="bubble red">小提醒：炫酷只是调料，理解才是主菜。</div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="frame" style="--i:8">
+                <span class="label">8. 导出中心</span>
+                <div class="phone">
+                    <div class="head"><span>09:22</span><span>导出与分享</span><span>PDF / Anki</span></div>
+                    <div class="content">
+                        <div class="bubble">今天错题 12 题，可导出到你的复习系统。</div>
+                        <div class="list">
+                            <div class="line"><span>导出 PDF（带解析）</span><span class="chip ok">支持</span></div>
+                            <div class="line"><span>导出 Anki 卡片包</span><span class="chip ok">支持</span></div>
+                            <div class="line"><span>导出复习日历</span><span class="chip info">支持</span></div>
+                        </div>
+                        <button class="btn green">一键导出全部错题</button>
+                        <button class="btn">生成挑战海报</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="frame" style="--i:9">
+                <span class="label">9. 会员与成本监控</span>
+                <div class="phone">
+                    <div class="head"><span>09:23</span><span>成长中心</span><span>运营后台</span></div>
+                    <div class="content">
+                        <div class="bubble red">游客每天 1 局，VIP 无限局。规则透明，别偷偷扣分。</div>
+                        <div class="panel">
+                            <div class="line"><span>今日模型调用：328 次</span><span class="chip info">监控</span></div>
+                            <div class="line"><span>缓存命中：62%</span><span class="chip ok">节省</span></div>
+                            <div class="line"><span>Token 预警阈值：80%</span><span class="chip">告警</span></div>
+                        </div>
+                        <div class="bar">
+                            <div id="tokenBar"
+                                style="width:72%; background:repeating-linear-gradient(45deg,#ff7b5f,#ff7b5f 10px,#ffab90 10px,#ffab90 20px);">
+                            </div>
+                        </div>
+                        <button class="btn red">查看会员层级与支付配置</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <div class="note">
+        本文件对应扩展阶段原型，分为 P0、P1、P2 三组，每组均为一行三列。页面文案保持搞怪吐槽语气，但业务信息采用清晰结构，方便后续转产品文档和需求评审。
+    </div>
+
+    <script>
+        const ragBar = document.getElementById("ragBar");
+        const stops = [46, 62, 71, 84, 67];
+        let x = 0;
+        setInterval(() => {
+            ragBar.style.width = stops[x % stops.length] + "%";
+            x += 1;
+        }, 1300);
+
+        const timer = document.getElementById("battleTimer");
+        let sec = 45;
+        setInterval(() => {
+            sec = sec <= 0 ? 45 : sec - 1;
+            const mm = String(Math.floor(sec / 60)).padStart(2, "0");
+            const ss = String(sec % 60).padStart(2, "0");
+            timer.textContent = mm + ":" + ss;
+        }, 1000);
+
+        const videoSteps = document.querySelectorAll("#videoTimeline .step");
+        let current = 1;
+        setInterval(() => {
+            videoSteps.forEach((s, i) => {
+                if (i <= current) s.classList.add("on");
+                else s.classList.remove("on");
+            });
+            current = (current + 1) % videoSteps.length;
+        }, 1500);
+    </script>
+</body>
+
+</html>
